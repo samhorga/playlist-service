@@ -13,6 +13,10 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import javax.transaction.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -90,5 +94,24 @@ public class PlaylistControllerTests {
         Playlist playlistResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Playlist.class);
 
         assertEquals("SONG1", playlistResponse.getSongList().get(0));
+    }
+
+
+    @Test
+    public void removeSongFromPlaylist() throws Exception {
+        Playlist playlist = new Playlist();
+        playlist.setPlaylistName("PLAYLIST 1");
+
+        List<String> songsList = new ArrayList<>(Arrays.asList("Song1, Song2"));
+        playlist.setSongList(songsList);
+        Playlist saved = playlistRepository.save(playlist);
+
+        mockMvc.perform(put("/playlist/remove/" + "Song2").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(saved))).andExpect(status().isOk());
+
+        MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId())).andExpect(status().isOk()).andReturn();
+
+        Playlist playlistResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Playlist.class);
+
+        assertEquals(1, playlistResponse.getSongList().size());
     }
 }

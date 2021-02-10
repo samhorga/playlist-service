@@ -26,8 +26,13 @@ public class PlaylistController {
         return playlistService.getPlaylistById(id);
     }
 
-    @PutMapping("/{nameOfTheSong}")
+    @PutMapping("/add/{nameOfTheSong}")
     public void addNewSong(@RequestBody Playlist playlist, @PathVariable String nameOfTheSong) {
          playlistService.addNewSong(playlist, nameOfTheSong);
+    }
+
+    @PutMapping("/remove/{nameOfTheSong}")
+    public void removeSong(@RequestBody Playlist playlist, @PathVariable String nameOfTheSong) {
+        playlistService.removeSong(playlist, nameOfTheSong);
     }
 }

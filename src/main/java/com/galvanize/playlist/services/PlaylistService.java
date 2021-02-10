@@ -23,12 +23,12 @@ public class PlaylistService {
     public String createPlaylist(Playlist playlist) {
         List<Playlist> list = playlistRepository.findAll();
 
-            for (Playlist pl : list) {
-                if (pl.getPlaylistName() != null) {
-                    if (pl.getPlaylistName().equals(playlist.getPlaylistName())) {
-                        return "Playlist name already exists. Please use another name.";
-                    }
+        for (Playlist pl : list) {
+            if (pl.getPlaylistName() != null) {
+                if (pl.getPlaylistName().equals(playlist.getPlaylistName())) {
+                    return "Playlist name already exists. Please use another name.";
                 }
+            }
         }
         if (playlist.getPlaylistName() == null) {
             return "Playlist name requried.";
@@ -42,4 +42,12 @@ public class PlaylistService {
         playlistFounded.addSong(nameOfTheSong);
         playlistRepository.save(playlistFounded);
     }
+
+    public void removeSong(Playlist playlist, String nameOfTheSong) {
+
+        Playlist playlistFounded = playlistRepository.findById(playlist.getId()).get();
+        playlistFounded.removeSong(nameOfTheSong);
+        playlistRepository.save(playlistFounded);
+    }
 }
+

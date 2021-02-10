@@ -46,4 +46,9 @@ public class Playlist {
     public void addSong(String nameOfTheSong) {
         songList.add(nameOfTheSong);
     }
+
+    public List<String> removeSong(String nameOfTheSong) {
+        songList.remove(nameOfTheSong);
+        return  songList;
+    }
 }

@@ -91,4 +91,24 @@ public class PlaylistServiceTests {
         assertEquals("SONG1", playlistFounded.getSongList().get(0));
 
     }
+
+    @Test
+    public void removeSongFromPlaylist() {
+        Playlist playlist = new Playlist();
+        playlist.setPlaylistName("Playlist 2");
+        playlist.setId(1L);
+        when(playlistRepository.findById(any())).thenReturn(Optional.of(playlist));
+        when(playlistRepository.save(any())).thenReturn(playlist);
+
+        playlistService.addNewSong(playlist, "SONG1");
+        playlistService.addNewSong(playlist, "SONG2");
+
+        playlistService.removeSong(playlist,"SONG2");
+
+        Playlist playlistFounded = playlistService.getPlaylistById(1L);
+
+        assertEquals(1, playlistFounded.getSongList().size());
+        assertEquals("SONG1", playlistFounded.getSongList().get(0));
+
+    }
 }
