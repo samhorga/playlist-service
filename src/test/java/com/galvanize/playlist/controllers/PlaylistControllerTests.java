@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +72,10 @@ public class PlaylistControllerTests {
 
         String actual = mockMvc.perform(post("/playlist").content(playlist2String).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andDo(document("createPlaylist",
+                        requestFields(fieldWithPath("playlistName").description("name of the playlist"),
+                                fieldWithPath("songList").description("list with the songs"),
+                                fieldWithPath("id").description("entry id"))))
                 .andReturn().getResponse().getContentAsString();
 
         assertEquals("Playlist name already exists. Please use another name.", actual);
@@ -85,6 +88,10 @@ public class PlaylistControllerTests {
 
         String actual = mockMvc.perform(post("/playlist").content(playlist2String).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andDo(document("createPlaylist",
+                        requestFields(fieldWithPath("playlistName").description("name of the playlist"),
+                                fieldWithPath("songList").description("list with the songs"),
+                                fieldWithPath("id").description("entry id"))))
                 .andReturn().getResponse().getContentAsString();
 
         assertEquals("Playlist name requried.", actual);
@@ -96,7 +103,11 @@ public class PlaylistControllerTests {
         playlist.setPlaylistName("PLAYLIST 1");
         Playlist saved = playlistRepository.save(playlist);
 
-        mockMvc.perform(put("/playlist/add" + "/SONG1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(saved))).andExpect(status().isOk());
+        mockMvc.perform(put("/playlist/add" + "/SONG1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(saved))).andExpect(status().isOk())
+                .andDo(document("addNewSong",
+                        requestFields(fieldWithPath("playlistName").description("name of the playlist"),
+                                fieldWithPath("songList").description("list with the songs"),
+                                fieldWithPath("id").description("entry id"))));
 
         MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId())).andExpect(status().isOk()).andReturn();
 
@@ -116,7 +127,14 @@ public class PlaylistControllerTests {
         songsList.add("Song2");
         playlist.setSongList(songsList);
         Playlist saved = playlistRepository.save(playlist);
-        mockMvc.perform(put("/playlist/remove/" + "Song1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(saved))).andExpect(status().isOk());
+        mockMvc.perform(put("/playlist/remove/" + "Song1").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(saved)))
+                .andExpect(status().isOk())
+                .andDo(document("removeSong",
+                        requestFields(fieldWithPath("playlistName").description("name of the playlist"),
+                                fieldWithPath("songList").description("list with the songs"),
+                                fieldWithPath("id").description("entry id"))));
+
         MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId())).andExpect(status().isOk()).andReturn();
         Playlist playlistResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Playlist.class);
 
@@ -138,7 +156,13 @@ public class PlaylistControllerTests {
 
         Playlist playlist2 = new Playlist();
         playlist2.setPlaylistName("Playlist 1");
-        MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId())).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId()))
+                .andExpect(status().isOk())
+                .andDo(document("getPlaylistById",
+                        responseFields(fieldWithPath("playlistName").description("name of the playlist"),
+                                fieldWithPath("songList").description("list with the songs"),
+                                fieldWithPath("id").description("entry id"))))
+                .andReturn();
         Playlist playlistResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Playlist.class);
 
         assertEquals(2, playlistResponse.getSongList().size());

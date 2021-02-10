@@ -1,17 +1,11 @@
 = Playlist Api
 
-== Get Playlist Entries
-
-.request
-include::{snippets}/createPlaylist/http-request.adoc[]
-
-.response
-include::{snippets}/createPlaylist/http-response.adoc[]
+== Get Operations
 
 .response fields
-include::{snippets}/createPlaylist/response-fields.adoc[]
+include::{snippets}/getPlaylistById/response-fields.adoc[]
 
-== Add Playlist Entry
+== Create Operations
 
 .request
 include::{snippets}/createPlaylist/http-request.adoc[]
@@ -22,6 +16,16 @@ include::{snippets}/createPlaylist/request-fields.adoc[]
 .response
 include::{snippets}/createPlaylist/http-response.adoc[]
 
-.response fields
-include::{snippets}/createPlaylist/response-fields.adoc[]
+== Update Operations
 
+.request
+include::{snippets}/removeSong/request-fields.adoc[]
+
+.response
+include::{snippets}/removeSong/http-response.adoc[]
+
+.request
+include::{snippets}/addNewSong/request-fields.adoc[]
+
+.response
+include::{snippets}/addNewSong/http-response.adoc[]
