@@ -5,6 +5,7 @@ import com.galvanize.playlist.model.Playlist;
 import com.galvanize.playlist.repository.PlaylistRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -19,12 +20,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 public class PlaylistControllerTests {
 
     @Autowired
@@ -43,6 +48,10 @@ public class PlaylistControllerTests {
         String playlistString = objectMapper.writeValueAsString(playlist);
         String actual = mockMvc.perform(post("/playlist").content(playlistString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andDo(document("createPlaylist",
+                        requestFields(fieldWithPath("playlistName").description("name of the playlist"),
+                                fieldWithPath("songList").description("list with the songs"),
+                                fieldWithPath("id").description("entry id"))))
                 .andReturn().getResponse().getContentAsString();
 
         Playlist playlistAdded = playlistRepository.save(new Playlist());
@@ -112,7 +121,7 @@ public class PlaylistControllerTests {
         Playlist playlistResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Playlist.class);
 
         assertEquals(1, playlistResponse.getSongList().size());
-        assertEquals("Song2",playlistResponse.getSongList().get(0));
+        assertEquals("Song2", playlistResponse.getSongList().get(0));
     }
 
     @Test
@@ -132,7 +141,7 @@ public class PlaylistControllerTests {
         MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId())).andExpect(status().isOk()).andReturn();
         Playlist playlistResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Playlist.class);
 
-        assertEquals(2,playlistResponse.getSongList().size());
+        assertEquals(2, playlistResponse.getSongList().size());
         assertEquals("Song1", playlistResponse.getSongList().get(0));
         assertEquals("Song2", playlistResponse.getSongList().get(1));
     }

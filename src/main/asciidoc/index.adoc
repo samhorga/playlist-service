@@ -1,0 +1,27 @@
+= Playlist Api
+
+== Get Playlist Entries
+
+.request
+include::{snippets}/createPlaylist/http-request.adoc[]
+
+.response
+include::{snippets}/createPlaylist/http-response.adoc[]
+
+.response fields
+include::{snippets}/createPlaylist/response-fields.adoc[]
+
+== Add Playlist Entry
+
+.request
+include::{snippets}/createPlaylist/http-request.adoc[]
+
+.request fields
+include::{snippets}/createPlaylist/request-fields.adoc[]
+
+.response
+include::{snippets}/createPlaylist/http-response.adoc[]
+
+.response fields
+include::{snippets}/createPlaylist/response-fields.adoc[]
+
