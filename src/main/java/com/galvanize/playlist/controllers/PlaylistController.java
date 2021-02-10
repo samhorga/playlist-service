@@ -18,6 +18,11 @@ public class PlaylistController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String createPlaylist(@RequestBody Playlist playlist) {
-        return null;
+        return playlistService.createPlaylist(playlist);
+    }
+
+    @GetMapping
+    public Playlist getPlaylistById(@PathVariable Long id) {
+        return playlistService.getPlaylistById(id);
     }
 }

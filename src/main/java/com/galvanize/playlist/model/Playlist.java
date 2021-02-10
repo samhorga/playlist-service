@@ -16,10 +16,14 @@ public class Playlist {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String playlistName;
+
     @OneToMany(cascade = CascadeType.ALL)
     private List<Song> songList;
 
     public Playlist() {
         songList = new ArrayList<Song>();
     }
+
+
 }
