@@ -23,11 +23,11 @@ public class Playlist {
     @NotNull
     private String playlistName;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Song> songList;
+    @ElementCollection
+    private List<String> songList;
 
     public Playlist() {
-        songList = new ArrayList<Song>();
+        songList = new ArrayList<String>();
     }
 
     @Override
@@ -41,5 +41,9 @@ public class Playlist {
     @Override
     public int hashCode() {
         return Objects.hash(playlistName);
+    }
+
+    public void addSong(String nameOfTheSong) {
+        songList.add(nameOfTheSong);
     }
 }

@@ -37,4 +37,9 @@ public class PlaylistService {
         return "Playlist was created successfully.";
     }
 
+    public void addNewSong(Playlist playlist, String nameOfTheSong) {
+        Playlist playlistFounded = playlistRepository.findById(playlist.getId()).get();
+        playlistFounded.addSong(nameOfTheSong);
+        playlistRepository.save(playlistFounded);
+    }
 }

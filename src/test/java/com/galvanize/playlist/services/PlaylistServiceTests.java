@@ -63,6 +63,7 @@ public class PlaylistServiceTests {
         String actualString = playlistService.createPlaylist(playlist);
         assertEquals("Playlist name already exists. Please use another name.", actualString);
     }
+
     @Test
     public void emptyPlaylistName() {
         Playlist playlist = new Playlist();
@@ -71,7 +72,23 @@ public class PlaylistServiceTests {
         String actualString = playlistService.createPlaylist(playlist);
 
         verify(playlistRepository).findAll();
-        
+
         assertEquals("Playlist name requried.", actualString);
+    }
+
+    @Test
+    public void addSongToPlaylist() {
+        Playlist playlist = new Playlist();
+        playlist.setPlaylistName("Playlist 2");
+        playlist.setId(1L);
+        when(playlistRepository.findById(any())).thenReturn(Optional.of(playlist));
+        when(playlistRepository.save(any())).thenReturn(playlist);
+        
+        playlistService.addNewSong(playlist, "SONG1");
+
+        Playlist playlistFounded = playlistService.getPlaylistById(1L);
+
+        assertEquals("SONG1", playlistFounded.getSongList().get(0));
+
     }
 }
