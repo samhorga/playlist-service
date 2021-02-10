@@ -8,7 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,16 +35,12 @@ public class PlaylistServiceTests {
         playlist.setId(1L);
 
         when(playlistRepository.save(any())).thenReturn(playlist);
-
         when(playlistRepository.findAll()).thenReturn(Collections.emptyList());
-
         String actualString = playlistService.createPlaylist(playlist);
-
         verify(playlistRepository).save(playlist);
 
         when(playlistRepository.findById(any())).thenReturn(Optional.of(playlist));
         Playlist playlistRetrieved = playlistService.getPlaylistById(1L);
-
         verify(playlistRepository).findById(any());
 
         assertTrue(playlistRetrieved.getSongList().isEmpty());
@@ -55,11 +53,8 @@ public class PlaylistServiceTests {
         playlist.setPlaylistName("Playlist 1");
         playlist.setId(1L);
         playlistService.createPlaylist(playlist);
-
         when(playlistRepository.findAll()).thenReturn(Collections.singletonList(playlist));
-
         verify(playlistRepository).findAll();
-
         String actualString = playlistService.createPlaylist(playlist);
         assertEquals("Playlist name already exists. Please use another name.", actualString);
     }
@@ -68,11 +63,8 @@ public class PlaylistServiceTests {
     public void emptyPlaylistName() {
         Playlist playlist = new Playlist();
         when(playlistRepository.findAll()).thenReturn(Collections.singletonList(playlist));
-
         String actualString = playlistService.createPlaylist(playlist);
-
         verify(playlistRepository).findAll();
-
         assertEquals("Playlist name requried.", actualString);
     }
 
@@ -83,13 +75,9 @@ public class PlaylistServiceTests {
         playlist.setId(1L);
         when(playlistRepository.findById(any())).thenReturn(Optional.of(playlist));
         when(playlistRepository.save(any())).thenReturn(playlist);
-        
         playlistService.addNewSong(playlist, "SONG1");
-
         Playlist playlistFounded = playlistService.getPlaylistById(1L);
-
         assertEquals("SONG1", playlistFounded.getSongList().get(0));
-
     }
 
     @Test
@@ -99,16 +87,34 @@ public class PlaylistServiceTests {
         playlist.setId(1L);
         when(playlistRepository.findById(any())).thenReturn(Optional.of(playlist));
         when(playlistRepository.save(any())).thenReturn(playlist);
-
         playlistService.addNewSong(playlist, "SONG1");
         playlistService.addNewSong(playlist, "SONG2");
-
-        playlistService.removeSong(playlist,"SONG2");
-
+        playlistService.removeSong(playlist, "SONG2");
         Playlist playlistFounded = playlistService.getPlaylistById(1L);
-
         assertEquals(1, playlistFounded.getSongList().size());
         assertEquals("SONG1", playlistFounded.getSongList().get(0));
+    }
+
+    @Test
+    public void retrievePlaylist() {
+        Playlist playlist = new Playlist();
+        playlist.setPlaylistName("Playlist 1");
+        playlist.setId(1L);
+
+        List<String> songsList = new ArrayList<>();
+        songsList.add("Song1");
+        songsList.add("Song2");
+        playlist.setSongList(songsList);
+
+        when(playlistRepository.findById(any())).thenReturn(Optional.of(playlist));
+        when(playlistRepository.findAll()).thenReturn(Collections.emptyList());
+        playlistService.createPlaylist(playlist);
+        verify(playlistRepository).save(any());
+
+        Playlist playlistFounded = playlistService.getPlaylistById(1L);
+        assertEquals("Song1", playlistFounded.getSongList().get(0));
+        assertEquals("Song2", playlistFounded.getSongList().get(1));
+
 
     }
 }

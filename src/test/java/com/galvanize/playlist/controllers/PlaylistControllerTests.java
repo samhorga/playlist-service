@@ -87,7 +87,7 @@ public class PlaylistControllerTests {
         playlist.setPlaylistName("PLAYLIST 1");
         Playlist saved = playlistRepository.save(playlist);
 
-        mockMvc.perform(put("/playlist" + "/SONG1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(saved))).andExpect(status().isOk());
+        mockMvc.perform(put("/playlist/add" + "/SONG1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(saved))).andExpect(status().isOk());
 
         MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId())).andExpect(status().isOk()).andReturn();
 
@@ -102,16 +102,38 @@ public class PlaylistControllerTests {
         Playlist playlist = new Playlist();
         playlist.setPlaylistName("PLAYLIST 1");
 
-        List<String> songsList = new ArrayList<>(Arrays.asList("Song1, Song2"));
+        List<String> songsList = new ArrayList<>();
+        songsList.add("Song1");
+        songsList.add("Song2");
         playlist.setSongList(songsList);
         Playlist saved = playlistRepository.save(playlist);
-
-        mockMvc.perform(put("/playlist/remove/" + "Song2").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(saved))).andExpect(status().isOk());
-
+        mockMvc.perform(put("/playlist/remove/" + "Song1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(saved))).andExpect(status().isOk());
         MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId())).andExpect(status().isOk()).andReturn();
-
         Playlist playlistResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Playlist.class);
 
         assertEquals(1, playlistResponse.getSongList().size());
+        assertEquals("Song2",playlistResponse.getSongList().get(0));
+    }
+
+    @Test
+    public void retrieveSongsofPlaylist() throws Exception {
+        Playlist playlist = new Playlist();
+        playlist.setPlaylistName("Playlist 1");
+
+        List<String> songsList = new ArrayList<>();
+        songsList.add("Song1");
+        songsList.add("Song2");
+
+        playlist.setSongList(songsList);
+        Playlist saved = playlistRepository.save(playlist);
+
+        Playlist playlist2 = new Playlist();
+        playlist2.setPlaylistName("Playlist 1");
+        MvcResult mvcResult = mockMvc.perform(get("/playlist" + "/" + saved.getId())).andExpect(status().isOk()).andReturn();
+        Playlist playlistResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Playlist.class);
+
+        assertEquals(2,playlistResponse.getSongList().size());
+        assertEquals("Song1", playlistResponse.getSongList().get(0));
+        assertEquals("Song2", playlistResponse.getSongList().get(1));
     }
 }
