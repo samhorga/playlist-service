@@ -20,7 +20,6 @@ public class Playlist {
     private Long id;
 
     @Column(unique=true)
-    @NotNull
     private String playlistName;
 
     @ElementCollection
