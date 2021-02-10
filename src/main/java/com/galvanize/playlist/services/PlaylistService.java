@@ -2,8 +2,11 @@ package com.galvanize.playlist.services;
 
 import com.galvanize.playlist.model.Playlist;
 import com.galvanize.playlist.repository.PlaylistRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class PlaylistService {
@@ -14,11 +17,24 @@ public class PlaylistService {
     }
 
     public Playlist getPlaylistById(Long id) {
-       return playlistRepository.findById(id).get();
+        return playlistRepository.findById(id).get();
     }
 
     public String createPlaylist(Playlist playlist) {
+        List<Playlist> list = playlistRepository.findAll();
+
+            for (Playlist pl : list) {
+                if (pl.getPlaylistName() != null) {
+                    if (pl.getPlaylistName().equals(playlist.getPlaylistName())) {
+                        return "Playlist name already exists. Please use another name.";
+                    }
+                }
+        }
+        if (playlist.getPlaylistName() == null) {
+            return "Playlist name requried.";
+        }
         playlistRepository.save(playlist);
         return "Playlist was created successfully.";
     }
+
 }
